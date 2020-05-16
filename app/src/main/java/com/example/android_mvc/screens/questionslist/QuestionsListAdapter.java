@@ -1,4 +1,4 @@
-package com.example.android_mvc.questionslist;
+package com.example.android_mvc.screens.questionslist;
 
 import android.content.Context;
 import android.view.LayoutInflater;
