@@ -1,4 +1,4 @@
-package com.example.android_mvc.common;
+package com.example.android_mvc.screens.common;
 
 import androidx.appcompat.app.AppCompatActivity;
 

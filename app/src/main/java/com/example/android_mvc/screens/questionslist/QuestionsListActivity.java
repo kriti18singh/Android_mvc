@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.widget.Toast;
 
 import com.example.android_mvc.R;
-import com.example.android_mvc.common.BaseActivity;
+import com.example.android_mvc.screens.common.BaseActivity;
 import com.example.android_mvc.common.Constants;
 import com.example.android_mvc.networking.QuestionSchema;
 import com.example.android_mvc.networking.QuestionsListResponseSchema;
