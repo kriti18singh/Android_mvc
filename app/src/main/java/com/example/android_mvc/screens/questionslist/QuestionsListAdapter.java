@@ -27,19 +27,27 @@ public class QuestionsListAdapter extends ArrayAdapter<Question> {
         mOnQuestionClickListener = onQuestionClickListener;
     }
 
+    private static class ViewHolder {
+        private TextView mTxtTitle;
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.layout_question_list_item, parent, false);
+
+            ViewHolder holder = new ViewHolder();
+            holder.mTxtTitle = convertView.findViewById(R.id.txt_title);
+            convertView.setTag(holder);
         }
 
         final Question question = getItem(position);
 
         // bind the data to views
-        TextView txtTitle = convertView.findViewById(R.id.txt_title);
-        txtTitle.setText(question.getTitle());
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+        holder.mTxtTitle.setText(question.getTitle());
 
         // set listener
         convertView.setOnClickListener(new View.OnClickListener() {
