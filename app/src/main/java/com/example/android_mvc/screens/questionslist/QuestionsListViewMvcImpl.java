@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.Question;
@@ -12,19 +11,25 @@ import com.example.android_mvc.questions.Question;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuestionsListViewMvcImpl implements QuestionsListAdapter.OnQuestionClickListener, QuestionsListViewMvc {
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+public class QuestionsListViewMvcImpl implements QuestionsRecyclerAdapter.OnQuestionClickListener,
+        QuestionsListViewMvc {
 
     private View mRootView;
-    private ListView mLstQuestions;
-    private QuestionsListAdapter mQuestionsListAdapter;
+    private RecyclerView mRecyclerView;
+    private QuestionsRecyclerAdapter mQuestionsListAdapter;
 
     private List<Listener> mListeners = new ArrayList<>(1);
 
     public QuestionsListViewMvcImpl(LayoutInflater inflater, ViewGroup parent) {
         mRootView = inflater.inflate(R.layout.activity_questions_list, parent, false);
-        mLstQuestions = findViewById(R.id.lst_questions);
-        mQuestionsListAdapter = new QuestionsListAdapter(getContext(), this);
-        mLstQuestions.setAdapter(mQuestionsListAdapter);
+        mQuestionsListAdapter = new QuestionsRecyclerAdapter(inflater, this);
+
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mQuestionsListAdapter);
     }
 
     private Context getContext() {
@@ -60,8 +65,6 @@ public class QuestionsListViewMvcImpl implements QuestionsListAdapter.OnQuestion
 
     @Override
     public void bindQuestions(List<Question> questions) {
-        mQuestionsListAdapter.clear();
-        mQuestionsListAdapter.addAll(questions);
-        mQuestionsListAdapter.notifyDataSetChanged();
+        mQuestionsListAdapter.bindQuestions(questions);
     }
 }
