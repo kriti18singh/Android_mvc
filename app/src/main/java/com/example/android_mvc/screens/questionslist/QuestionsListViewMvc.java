@@ -1,18 +1,15 @@
 package com.example.android_mvc.screens.questionslist;
 
-import android.view.View;
-
+import com.example.android_mvc.common.ViewMvc;
 import com.example.android_mvc.questions.Question;
 
 import java.util.List;
 
-interface QuestionsListViewMvc {
+interface QuestionsListViewMvc extends ViewMvc {
 
     public interface Listener {
         void onQuestionClicked(Question question);
     }
-
-    View getRootView();
 
     void registerListener(Listener l);
 
