@@ -12,7 +12,7 @@ public abstract class BaseViewMvc implements ViewMvc {
         return mRootView;
     }
 
-    protected void setmRootView(View mRootView) {
+    protected void setRootView(View mRootView) {
         this.mRootView = mRootView;
     }
 
