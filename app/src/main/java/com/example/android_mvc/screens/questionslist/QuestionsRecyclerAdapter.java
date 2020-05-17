@@ -1,10 +1,9 @@
 package com.example.android_mvc.screens.questionslist;
 
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.example.android_mvc.questions.Question;
+import com.example.android_mvc.screens.common.ViewMvcFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecyclerAdapter.ViewHolder>
         implements QuestionListItemViewMvc.Listener {
 
-    private LayoutInflater mInflater;
+    private ViewMvcFactory mViewMvcFactory;
     private List<Question> mQuestions = new ArrayList<>();
 
     private final OnQuestionClickListener mOnQuestionClickListener;
@@ -24,15 +23,15 @@ public class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecy
         void onQuestionClicked(Question question);
     }
 
-    public QuestionsRecyclerAdapter(LayoutInflater inflater, OnQuestionClickListener listener) {
-        mInflater = inflater;
+    public QuestionsRecyclerAdapter(OnQuestionClickListener listener, ViewMvcFactory viewMvcFactory) {
         mOnQuestionClickListener = listener;
+        mViewMvcFactory = viewMvcFactory;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         QuestionListItemViewMvc mViewMvc;
 
-        public ViewHolder(@NonNull QuestionListItemViewMvc viewMvc) {
+        ViewHolder(@NonNull QuestionListItemViewMvc viewMvc) {
             super(viewMvc.getRootView());
             mViewMvc = viewMvc;
         }
@@ -42,10 +41,7 @@ public class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecy
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        QuestionListItemViewMvc viewMvc = new QuestionListItemViewMvcImpl(
-                mInflater,
-                parent
-        );
+        QuestionListItemViewMvc viewMvc = mViewMvcFactory.getQuestionListItemViewMvc(parent);
         viewMvc.registerListener(this);
         return new ViewHolder(viewMvc);
     }

@@ -5,7 +5,7 @@ import com.example.android_mvc.questions.Question;
 
 import java.util.List;
 
-interface QuestionsListViewMvc extends ObservableViewMvc<QuestionsListViewMvc.Listener> {
+public interface QuestionsListViewMvc extends ObservableViewMvc<QuestionsListViewMvc.Listener> {
 
     public interface Listener {
         void onQuestionClicked(Question question);
