@@ -46,7 +46,7 @@ public class QuestionsRecyclerAdapter extends RecyclerView.Adapter<QuestionsRecy
                 mInflater,
                 parent
         );
-        viewMvc.register(this);
+        viewMvc.registerListener(this);
         return new ViewHolder(viewMvc);
     }
 
