@@ -11,17 +11,17 @@ This class provides observable capabilities to any view mvc
 public abstract class BaseObservableViewMvc<ListenerType> extends BaseViewMvc
         implements ObservableViewMvc<ListenerType> {
 
-    private Set<ListenerType> mListeners = new HashSet<>();
+    private final Set<ListenerType> mListeners = new HashSet<>();
 
-    public void registerListener(ListenerType listener) {
+    public final void registerListener(ListenerType listener) {
         mListeners.add(listener);
     }
 
-    public void unregisterListener(ListenerType listener) {
+    public final void unregisterListener(ListenerType listener) {
         mListeners.remove(listener);
     }
 
-    protected Set<ListenerType> getListeners() {
+    protected final Set<ListenerType> getListeners() {
         return Collections.unmodifiableSet(mListeners);
     }
 }

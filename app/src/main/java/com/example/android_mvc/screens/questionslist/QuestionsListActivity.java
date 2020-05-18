@@ -4,25 +4,17 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.android_mvc.R;
+import com.example.android_mvc.questions.FetchLastActiveQuestionsUsecase;
 import com.example.android_mvc.screens.common.BaseActivity;
-import com.example.android_mvc.common.Constants;
-import com.example.android_mvc.networking.QuestionSchema;
-import com.example.android_mvc.networking.QuestionsListResponseSchema;
-import com.example.android_mvc.networking.StackoverflowApi;
 import com.example.android_mvc.questions.Question;
 import com.example.android_mvc.screens.questiondetails.QuestionDetailsActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+public class QuestionsListActivity extends BaseActivity implements QuestionsListViewMvcImpl.Listener, FetchLastActiveQuestionsUsecase.Listener {
 
-public class QuestionsListActivity extends BaseActivity implements QuestionsListViewMvcImpl.Listener {
-
-    private StackoverflowApi mStackoverflowApi;
     private QuestionsListViewMvc mViewMvc;
+    private FetchLastActiveQuestionsUsecase mFetchLastActiveQuestionsUsecase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +24,7 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
 
         mViewMvc.registerListener(this);
 
-        mStackoverflowApi = getCompositionRoot().getStackoverflowApi();
+        mFetchLastActiveQuestionsUsecase = getCompositionRoot().getFetchLastActiveQuestionsUsecase();
 
         setContentView(mViewMvc.getRootView());
     }
@@ -40,38 +32,18 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
     @Override
     protected void onStart() {
         super.onStart();
-        fetchQuestions();
+        mFetchLastActiveQuestionsUsecase.registerListener(this);
+        mFetchLastActiveQuestionsUsecase.fetchLastActiveQuestionsAndNotify();
     }
 
-    private void fetchQuestions() {
-        mStackoverflowApi.fetchLastActiveQuestions(Constants.QUESTIONS_LIST_PAGE_SIZE)
-                .enqueue(new Callback<QuestionsListResponseSchema>() {
-                    @Override
-                    public void onResponse(Call<QuestionsListResponseSchema> call, Response<QuestionsListResponseSchema> response) {
-                        if (response.isSuccessful()) {
-                            bindQuestions(response.body().getQuestions());
-                        } else {
-                            networkCallFailed();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<QuestionsListResponseSchema> call, Throwable t) {
-                        networkCallFailed();
-                    }
-                } );
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mFetchLastActiveQuestionsUsecase.unregisterListener(this);
     }
 
-    private void bindQuestions(List<QuestionSchema> questionSchemas) {
-        List<Question> questions = new ArrayList<>(questionSchemas.size());
-        for (QuestionSchema questionSchema : questionSchemas) {
-            questions.add(new Question(questionSchema.getId(), questionSchema.getTitle()));
-        }
+    private void bindQuestions(List<Question> questions) {
         mViewMvc.bindQuestions(questions);
-    }
-
-    private void networkCallFailed() {
-        Toast.makeText(this, R.string.error_network_call_failed, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -83,5 +55,15 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
     protected void onDestroy() {
         super.onDestroy();
         mViewMvc.unregisterListener(this);
+    }
+
+    @Override
+    public void onLastActiveQuestionsFetched(List<Question> questions) {
+        bindQuestions(questions);
+    }
+
+    @Override
+    public void onLastActiveQuestionsFetchFailed() {
+        Toast.makeText(this, R.string.error_network_call_failed, Toast.LENGTH_SHORT).show();
     }
 }

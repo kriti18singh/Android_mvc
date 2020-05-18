@@ -6,30 +6,24 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.android_mvc.R;
-import com.example.android_mvc.networking.QuestionDetailsResponseSchema;
-import com.example.android_mvc.networking.QuestionSchema;
-import com.example.android_mvc.networking.StackoverflowApi;
+import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
 import com.example.android_mvc.questions.QuestionDetails;
 import com.example.android_mvc.screens.common.BaseActivity;
 
 import androidx.annotation.Nullable;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class QuestionDetailsActivity extends BaseActivity {
+public class QuestionDetailsActivity extends BaseActivity implements FetchQuestionDetailsUsecase.Listener {
 
     private static final String EXTRA_QUESTION_ID = "question_id";
-    private StackoverflowApi mStackoverflowApi;
     private QuestionDetailsViewMvc mQuestionDetailsViewMvc;
+    private FetchQuestionDetailsUsecase mFetchQuestionDetailsUsecase;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mStackoverflowApi = getCompositionRoot().getStackoverflowApi();
         mQuestionDetailsViewMvc = getCompositionRoot().getMvcFactory().getQuestionDetailsViewMvc(null);
-
+        mFetchQuestionDetailsUsecase = getCompositionRoot().getFetchQuestionDetailsUsecase();
 
         setContentView(mQuestionDetailsViewMvc.getRootView());
     }
@@ -37,30 +31,16 @@ public class QuestionDetailsActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mFetchQuestionDetailsUsecase.registerListener(this);
         mQuestionDetailsViewMvc.showProgressIndication();
-        fetchQuestionDetails();
+        mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
     }
 
-    private void fetchQuestionDetails() {
-        mStackoverflowApi.fetchQuestionDetails(getQuestionId())
-                .enqueue(new Callback<QuestionDetailsResponseSchema>() {
-                    @Override
-                    public void onResponse(Call<QuestionDetailsResponseSchema> call,
-                                           Response<QuestionDetailsResponseSchema> response) {
-                        if (response.isSuccessful()) {
-                            bindQuestion(response.body().getQuestion());
-                        } else {
-                            networkCallFailed();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<QuestionDetailsResponseSchema> call, Throwable t) {
-                        networkCallFailed();
-                    }
-                } );
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mFetchQuestionDetailsUsecase.unregisterListener(this);
     }
-
 
     private String getQuestionId() {
         return getIntent().getStringExtra(EXTRA_QUESTION_ID);
@@ -72,20 +52,19 @@ public class QuestionDetailsActivity extends BaseActivity {
         context.startActivity(intent);
     }
 
-
-    private void networkCallFailed() {
+    private void bindQuestion(QuestionDetails questionDetails) {
         mQuestionDetailsViewMvc.hideProgressIndication();
-        Toast.makeText(this, getString(R.string.error_network_call_failed), Toast.LENGTH_LONG).show();
+        mQuestionDetailsViewMvc.bindQuestionDetails(questionDetails);
     }
 
-    private void bindQuestion(QuestionSchema question) {
+    @Override
+    public void onQuestionDetailsFetched(QuestionDetails questionDetails) {
+        bindQuestion(questionDetails);
+    }
+
+    @Override
+    public void onQuestionDetailsFetchFailed() {
         mQuestionDetailsViewMvc.hideProgressIndication();
-        mQuestionDetailsViewMvc.bindQuestionDetails(
-                new QuestionDetails(
-                        question.getId(),
-                        question.getTitle(),
-                        question.getBody()
-                )
-        );
+        Toast.makeText(this, getString(R.string.error_network_call_failed), Toast.LENGTH_LONG).show();
     }
 }
