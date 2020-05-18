@@ -3,6 +3,8 @@ package com.example.android_mvc.screens.common;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.example.android_mvc.screens.questiondetails.QuestionDetailsViewMvc;
+import com.example.android_mvc.screens.questiondetails.QuestionDetailsViewMvcImpl;
 import com.example.android_mvc.screens.questionslist.QuestionListItemViewMvc;
 import com.example.android_mvc.screens.questionslist.QuestionListItemViewMvcImpl;
 import com.example.android_mvc.screens.questionslist.QuestionsListViewMvc;
@@ -24,5 +26,9 @@ public class ViewMvcFactory {
 
     public QuestionListItemViewMvc getQuestionListItemViewMvc(@Nullable ViewGroup parent) {
         return new QuestionListItemViewMvcImpl(mInflater, parent);
+    }
+
+    public QuestionDetailsViewMvc getQuestionDetailsViewMvc(@Nullable ViewGroup parent) {
+        return new QuestionDetailsViewMvcImpl(mInflater, parent);
     }
 }

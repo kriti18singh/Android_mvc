@@ -10,6 +10,7 @@ import com.example.android_mvc.networking.QuestionSchema;
 import com.example.android_mvc.networking.QuestionsListResponseSchema;
 import com.example.android_mvc.networking.StackoverflowApi;
 import com.example.android_mvc.questions.Question;
+import com.example.android_mvc.screens.questiondetails.QuestionDetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,7 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
 
     @Override
     public void onQuestionClicked(Question question) {
-        Toast.makeText(this, question.getTitle(), Toast.LENGTH_SHORT).show();
+        QuestionDetailsActivity.start(this, question.getId());
     }
 
     @Override
