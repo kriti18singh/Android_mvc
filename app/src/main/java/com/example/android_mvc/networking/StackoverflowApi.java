@@ -1,6 +1,8 @@
 package com.example.android_mvc.networking;
 
 import com.example.android_mvc.common.Constants;
+import com.example.android_mvc.networking.questions.QuestionDetailsResponseSchema;
+import com.example.android_mvc.networking.questions.QuestionsListResponseSchema;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

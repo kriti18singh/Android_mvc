@@ -5,8 +5,8 @@ import android.view.ViewGroup;
 
 import com.example.android_mvc.screens.questiondetails.QuestionDetailsViewMvc;
 import com.example.android_mvc.screens.questiondetails.QuestionDetailsViewMvcImpl;
-import com.example.android_mvc.screens.questionslist.QuestionListItemViewMvc;
-import com.example.android_mvc.screens.questionslist.QuestionListItemViewMvcImpl;
+import com.example.android_mvc.screens.questionslist.questionlistitem.QuestionListItemViewMvc;
+import com.example.android_mvc.screens.questionslist.questionlistitem.QuestionListItemViewMvcImpl;
 import com.example.android_mvc.screens.questionslist.QuestionsListViewMvc;
 import com.example.android_mvc.screens.questionslist.QuestionsListViewMvcImpl;
 

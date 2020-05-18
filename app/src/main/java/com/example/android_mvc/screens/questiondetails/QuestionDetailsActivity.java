@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
 import com.example.android_mvc.questions.QuestionDetails;
-import com.example.android_mvc.screens.common.BaseActivity;
+import com.example.android_mvc.screens.common.controllers.BaseActivity;
 
 import androidx.annotation.Nullable;
 

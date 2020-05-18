@@ -5,7 +5,7 @@ import android.widget.Toast;
 
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.FetchLastActiveQuestionsUsecase;
-import com.example.android_mvc.screens.common.BaseActivity;
+import com.example.android_mvc.screens.common.controllers.BaseActivity;
 import com.example.android_mvc.questions.Question;
 import com.example.android_mvc.screens.questiondetails.QuestionDetailsActivity;
 

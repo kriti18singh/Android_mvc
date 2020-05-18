@@ -2,8 +2,8 @@ package com.example.android_mvc.questions;
 
 import com.example.android_mvc.common.BaseObservable;
 import com.example.android_mvc.common.Constants;
-import com.example.android_mvc.networking.QuestionSchema;
-import com.example.android_mvc.networking.QuestionsListResponseSchema;
+import com.example.android_mvc.networking.questions.QuestionSchema;
+import com.example.android_mvc.networking.questions.QuestionsListResponseSchema;
 import com.example.android_mvc.networking.StackoverflowApi;
 
 import java.util.ArrayList;

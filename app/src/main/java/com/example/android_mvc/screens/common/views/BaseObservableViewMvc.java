@@ -1,4 +1,4 @@
-package com.example.android_mvc.screens.common;
+package com.example.android_mvc.screens.common.views;
 
 import java.util.Collections;
 import java.util.HashSet;

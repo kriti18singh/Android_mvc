@@ -4,6 +4,7 @@ import android.view.ViewGroup;
 
 import com.example.android_mvc.questions.Question;
 import com.example.android_mvc.screens.common.ViewMvcFactory;
+import com.example.android_mvc.screens.questionslist.questionlistitem.QuestionListItemViewMvc;
 
 import java.util.ArrayList;
 import java.util.List;

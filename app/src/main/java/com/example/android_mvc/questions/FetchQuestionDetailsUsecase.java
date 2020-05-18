@@ -1,8 +1,8 @@
 package com.example.android_mvc.questions;
 
 import com.example.android_mvc.common.BaseObservable;
-import com.example.android_mvc.networking.QuestionDetailsResponseSchema;
-import com.example.android_mvc.networking.QuestionSchema;
+import com.example.android_mvc.networking.questions.QuestionDetailsResponseSchema;
+import com.example.android_mvc.networking.questions.QuestionSchema;
 import com.example.android_mvc.networking.StackoverflowApi;
 
 import retrofit2.Call;

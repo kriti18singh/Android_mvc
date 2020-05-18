@@ -1,6 +1,6 @@
 package com.example.android_mvc.screens.questionslist;
 
-import com.example.android_mvc.screens.common.ObservableViewMvc;
+import com.example.android_mvc.screens.common.views.ObservableViewMvc;
 import com.example.android_mvc.questions.Question;
 
 import java.util.List;

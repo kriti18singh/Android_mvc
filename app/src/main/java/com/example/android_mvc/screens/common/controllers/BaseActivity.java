@@ -1,6 +1,6 @@
-package com.example.android_mvc.screens.common;
+package com.example.android_mvc.screens.common.controllers;
 
-import com.example.android_mvc.CustomApplication;
+import com.example.android_mvc.common.CustomApplication;
 import com.example.android_mvc.common.dependencyinjection.ControllerCompositionRoot;
 
 import androidx.appcompat.app.AppCompatActivity;

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.QuestionDetails;
-import com.example.android_mvc.screens.common.BaseViewMvc;
+import com.example.android_mvc.screens.common.views.BaseViewMvc;
 
 public class QuestionDetailsViewMvcImpl extends BaseViewMvc implements QuestionDetailsViewMvc {
 

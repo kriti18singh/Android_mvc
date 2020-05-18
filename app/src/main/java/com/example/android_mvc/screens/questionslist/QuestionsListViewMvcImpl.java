@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.Question;
-import com.example.android_mvc.screens.common.BaseObservableViewMvc;
+import com.example.android_mvc.screens.common.views.BaseObservableViewMvc;
 import com.example.android_mvc.screens.common.ViewMvcFactory;
 
 import java.util.List;
