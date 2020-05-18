@@ -3,6 +3,7 @@ package com.example.android_mvc.screens.questiondetails;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android_mvc.R;
@@ -12,7 +13,8 @@ import com.example.android_mvc.screens.common.controllers.BaseActivity;
 
 import androidx.annotation.Nullable;
 
-public class QuestionDetailsActivity extends BaseActivity implements FetchQuestionDetailsUsecase.Listener {
+public class QuestionDetailsActivity extends BaseActivity
+        implements FetchQuestionDetailsUsecase.Listener, QuestionDetailsViewMvc.Listener {
 
     private static final String EXTRA_QUESTION_ID = "question_id";
     private QuestionDetailsViewMvc mQuestionDetailsViewMvc;
@@ -34,12 +36,14 @@ public class QuestionDetailsActivity extends BaseActivity implements FetchQuesti
         mFetchQuestionDetailsUsecase.registerListener(this);
         mQuestionDetailsViewMvc.showProgressIndication();
         mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
+        mQuestionDetailsViewMvc.registerListener(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         mFetchQuestionDetailsUsecase.unregisterListener(this);
+        mQuestionDetailsViewMvc.unregisterListener(this);
     }
 
     private String getQuestionId() {
@@ -66,5 +70,11 @@ public class QuestionDetailsActivity extends BaseActivity implements FetchQuesti
     public void onQuestionDetailsFetchFailed() {
         mQuestionDetailsViewMvc.hideProgressIndication();
         Toast.makeText(this, getString(R.string.error_network_call_failed), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onNavigateUpClicked() {
+        Log.d("KRITI", "activity methos");
+        onBackPressed();
     }
 }
