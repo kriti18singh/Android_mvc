@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class QuestionsListViewMvcImpl extends BaseNavDrawerViewMvc<QuestionsListViewMvc.Listener>
-        implements QuestionsRecyclerAdapter.OnQuestionClickListener, QuestionsListViewMvc {
+        implements QuestionsRecyclerAdapter.OnQuestionClickListener, QuestionsListViewMvc, ToolbarViewMvc.HamburgerBtnClickListener {
 
     private RecyclerView mRecyclerView;
     private QuestionsRecyclerAdapter mQuestionsListAdapter;
@@ -44,7 +44,7 @@ public class QuestionsListViewMvcImpl extends BaseNavDrawerViewMvc<QuestionsList
         //toolbar set
         mToolbarViewMvc.setToolbarTitle((getString(R.string.questions_list_screen_title)));
         mToolbar.addView(mToolbarViewMvc.getRootView());
-        //mToolbarViewMvc.enableHamburgerButtonAndListen(this);
+        mToolbarViewMvc.enableHamburgerButtonAndListen(this);
     }
 
     @Override
@@ -67,5 +67,10 @@ public class QuestionsListViewMvcImpl extends BaseNavDrawerViewMvc<QuestionsList
                     l.onQuestionsListItemClicked();
             }
         }
+    }
+
+    @Override
+    public void onHamburgerBtnClicked() {
+        openDrawer();
     }
 }
