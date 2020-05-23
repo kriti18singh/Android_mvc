@@ -52,6 +52,11 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
     }
 
     @Override
+    public void onQuestionsListItemClicked() {
+        //this is the Questions List screen, so no op
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mViewMvc.unregisterListener(this);

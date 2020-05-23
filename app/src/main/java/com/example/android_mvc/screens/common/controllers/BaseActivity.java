@@ -1,11 +1,11 @@
 package com.example.android_mvc.screens.common.controllers;
 
+import android.app.Activity;
+
 import com.example.android_mvc.common.CustomApplication;
 import com.example.android_mvc.common.dependencyinjection.ControllerCompositionRoot;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends Activity {
 
     private ControllerCompositionRoot mControllerCompositionRoot;
 
