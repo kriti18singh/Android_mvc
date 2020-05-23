@@ -71,4 +71,14 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
     public void onLastActiveQuestionsFetchFailed() {
         Toast.makeText(this, R.string.error_network_call_failed, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onBackPressed() {
+        //close the drawer if it is open
+        if(mViewMvc.isDrawerOpen()) {
+            mViewMvc.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
