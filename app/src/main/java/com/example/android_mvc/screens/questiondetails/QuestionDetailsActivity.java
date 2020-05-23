@@ -3,13 +3,14 @@ package com.example.android_mvc.screens.questiondetails;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
 import com.example.android_mvc.questions.QuestionDetails;
 import com.example.android_mvc.screens.common.controllers.BaseActivity;
+import com.example.android_mvc.screens.common.navdrawer.DrawerItems;
+import com.example.android_mvc.screens.questionslist.QuestionsListActivity;
 
 import androidx.annotation.Nullable;
 
@@ -74,7 +75,23 @@ public class QuestionDetailsActivity extends BaseActivity
 
     @Override
     public void onNavigateUpClicked() {
-        Log.d("KRITI", "activity methos");
         onBackPressed();
+    }
+
+    @Override
+    public void onDrawerItemClicked(DrawerItems drawerItem) {
+        switch(drawerItem) {
+            case QUESTIONS_LIST:
+                QuestionsListActivity.startClearTop(this);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mQuestionDetailsViewMvc.isDrawerOpen()) {
+            mQuestionDetailsViewMvc.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

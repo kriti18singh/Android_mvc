@@ -1,5 +1,7 @@
 package com.example.android_mvc.screens.questionslist;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -15,6 +17,12 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
 
     private QuestionsListViewMvc mViewMvc;
     private FetchLastActiveQuestionsUsecase mFetchLastActiveQuestionsUsecase;
+
+    public static void startClearTop(Context context) {
+        Intent intent = new Intent(context, QuestionsListActivity.class);
+        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
