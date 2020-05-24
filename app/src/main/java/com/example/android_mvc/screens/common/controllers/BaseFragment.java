@@ -3,17 +3,18 @@ package com.example.android_mvc.screens.common.controllers;
 import com.example.android_mvc.common.CustomApplication;
 import com.example.android_mvc.common.dependencyinjection.ControllerCompositionRoot;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.Fragment;
 
-public class BaseActivity extends FragmentActivity {
+
+public class BaseFragment extends Fragment {
 
     private ControllerCompositionRoot mControllerCompositionRoot;
 
     public ControllerCompositionRoot getCompositionRoot() {
         if(mControllerCompositionRoot == null) {
             mControllerCompositionRoot = new ControllerCompositionRoot(
-                    ((CustomApplication) getApplication()).getCompositionRoot(),
-                    this
+                    ((CustomApplication) requireActivity().getApplication()).getCompositionRoot(),
+                    requireActivity()
             );
         }
         return mControllerCompositionRoot;
