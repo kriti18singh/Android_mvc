@@ -8,23 +8,34 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.android_mvc.R;
-import com.example.android_mvc.common.Constants;
 import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
 import com.example.android_mvc.questions.QuestionDetails;
+import com.example.android_mvc.screens.common.controllers.BackPressedDispatcher;
 import com.example.android_mvc.screens.common.controllers.BackPressedListener;
 import com.example.android_mvc.screens.common.controllers.BaseFragment;
 import com.example.android_mvc.screens.common.navdrawer.DrawerItems;
-import com.example.android_mvc.screens.questionslist.QuestionsListActivity;
+import com.example.android_mvc.screens.common.main.MainActivity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class QuestionDetailsFragment extends BaseFragment implements BackPressedListener,
         FetchQuestionDetailsUsecase.Listener, QuestionDetailsViewMvc.Listener {
 
+    private static final String ARG_QUESTION_ID = "ARG_QUESTION_ID";
 
     private QuestionDetailsViewMvc mQuestionDetailsViewMvc;
     private FetchQuestionDetailsUsecase mFetchQuestionDetailsUsecase;
+    private BackPressedDispatcher mBackPressedDispatcher;
+
+    public static Fragment newInstance(String questionId) {
+        Bundle args = new Bundle();
+        args.putString(ARG_QUESTION_ID, questionId);
+        QuestionDetailsFragment fragment = new QuestionDetailsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -32,6 +43,7 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
                              @Nullable Bundle savedInstanceState) {
         mQuestionDetailsViewMvc = getCompositionRoot().getMvcFactory().getQuestionDetailsViewMvc(container);
         mFetchQuestionDetailsUsecase = getCompositionRoot().getFetchQuestionDetailsUsecase();
+        mBackPressedDispatcher = getCompositionRoot().getBackPressedDispatcher();
 
         return mQuestionDetailsViewMvc.getRootView();
     }
@@ -43,6 +55,7 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
         mQuestionDetailsViewMvc.showProgressIndication();
         mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
         mQuestionDetailsViewMvc.registerListener(this);
+        mBackPressedDispatcher.registerListener(this);
     }
 
     @Override
@@ -50,12 +63,12 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
         super.onStop();
         mFetchQuestionDetailsUsecase.unregisterListener(this);
         mQuestionDetailsViewMvc.unregisterListener(this);
+        mBackPressedDispatcher.unregisterListener(this);
     }
 
     private String getQuestionId() {
-        //return getIntent().getStringExtra(Constants.EXTRA_QUESTION_ID);
         Bundle b = getArguments();
-        String id = b.getString(Constants.EXTRA_QUESTION_ID);
+        String id = b.getString(ARG_QUESTION_ID);
         return id;
     }
 
@@ -77,7 +90,6 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
 
     @Override
     public void onNavigateUpClicked() {
-        Log.d("KRITI", "onNavigateUpClicked in fragment");
         getActivity().onBackPressed();
     }
 
@@ -85,7 +97,7 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
     public void onDrawerItemClicked(DrawerItems drawerItem) {
         switch(drawerItem) {
             case QUESTIONS_LIST:
-                QuestionsListActivity.startClearTop(getContext());
+                MainActivity.startClearTop(getContext());
         }
     }
 
@@ -93,11 +105,9 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
     public boolean onBackPressed() {
 
         if(mQuestionDetailsViewMvc.isDrawerOpen()) {
-            Log.d("KRITI", "onNavigateUpClicked in if");
             mQuestionDetailsViewMvc.closeDrawer();
             return true;
         } else {
-            Log.d("KRITI", "onNavigateUpClicked in else");
             return false;
         }
     }
