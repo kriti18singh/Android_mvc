@@ -28,4 +28,8 @@ public class ScreensNavigator {
         ft.addToBackStack(null);
         ft.replace(mFragmentFrameWrapper.getFragmentFrame().getId(), QuestionDetailsFragment.newInstance(questionId)).commit();
     }
+
+    public void navigateUp() {
+
+    }
 }

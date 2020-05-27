@@ -14,7 +14,7 @@ import com.example.android_mvc.screens.common.controllers.BackPressedDispatcher;
 import com.example.android_mvc.screens.common.controllers.BackPressedListener;
 import com.example.android_mvc.screens.common.controllers.BaseFragment;
 import com.example.android_mvc.screens.common.navdrawer.DrawerItems;
-import com.example.android_mvc.screens.common.main.MainActivity;
+import com.example.android_mvc.screens.common.screensnavigation.ScreensNavigator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +28,7 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
     private QuestionDetailsViewMvc mQuestionDetailsViewMvc;
     private FetchQuestionDetailsUsecase mFetchQuestionDetailsUsecase;
     private BackPressedDispatcher mBackPressedDispatcher;
+    private ScreensNavigator mScreensNavigator;
 
     public static Fragment newInstance(String questionId) {
         Bundle args = new Bundle();
@@ -44,6 +45,7 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
         mQuestionDetailsViewMvc = getCompositionRoot().getMvcFactory().getQuestionDetailsViewMvc(container);
         mFetchQuestionDetailsUsecase = getCompositionRoot().getFetchQuestionDetailsUsecase();
         mBackPressedDispatcher = getCompositionRoot().getBackPressedDispatcher();
+        mScreensNavigator = getCompositionRoot().getScreensNavigator();
 
         return mQuestionDetailsViewMvc.getRootView();
     }
@@ -97,7 +99,7 @@ public class QuestionDetailsFragment extends BaseFragment implements BackPressed
     public void onDrawerItemClicked(DrawerItems drawerItem) {
         switch(drawerItem) {
             case QUESTIONS_LIST:
-                MainActivity.startClearTop(getContext());
+                mScreensNavigator.toQuestionsList();
         }
     }
 

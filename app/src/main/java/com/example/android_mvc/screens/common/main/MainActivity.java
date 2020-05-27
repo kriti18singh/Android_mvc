@@ -1,7 +1,5 @@
 package com.example.android_mvc.screens.common.main;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
@@ -18,12 +16,6 @@ import java.util.Set;
 import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends BaseActivity implements BackPressedDispatcher, FragmentFrameWrapper {
-
-    public static void startClearTop(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(intent);
-    }
 
     private final Set<BackPressedListener> mListeners = new HashSet<>();
 
