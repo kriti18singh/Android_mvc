@@ -8,6 +8,7 @@ import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
 import com.example.android_mvc.screens.common.ViewMvcFactory;
 import com.example.android_mvc.screens.common.controllers.BackPressedDispatcher;
 import com.example.android_mvc.screens.common.controllers.FragmentFrameWrapper;
+import com.example.android_mvc.screens.common.navdrawer.NavDrawerHelper;
 import com.example.android_mvc.screens.common.screensnavigation.ScreensNavigator;
 
 import androidx.fragment.app.FragmentActivity;
@@ -41,7 +42,11 @@ public class ControllerCompositionRoot {
     }
 
     public ViewMvcFactory getMvcFactory() {
-        return  new ViewMvcFactory(getInflater());
+        return  new ViewMvcFactory(getInflater(), getNavDrawerHelper());
+    }
+
+    private NavDrawerHelper getNavDrawerHelper() {
+        return (NavDrawerHelper) getActivity();
     }
 
     public FetchQuestionDetailsUsecase getFetchQuestionDetailsUsecase() {

@@ -5,10 +5,10 @@ import android.view.ViewGroup;
 
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.Question;
-import com.example.android_mvc.screens.common.navdrawer.BaseNavDrawerViewMvc;
-import com.example.android_mvc.screens.common.navdrawer.DrawerItems;
+import com.example.android_mvc.screens.common.navdrawer.NavDrawerHelper;
 import com.example.android_mvc.screens.common.toolbars.ToolbarViewMvc;
 import com.example.android_mvc.screens.common.ViewMvcFactory;
+import com.example.android_mvc.screens.common.views.BaseObservableViewMvc;
 
 import java.util.List;
 
@@ -16,17 +16,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class QuestionsListViewMvcImpl extends BaseNavDrawerViewMvc<QuestionsListViewMvc.Listener>
+public class QuestionsListViewMvcImpl extends BaseObservableViewMvc<QuestionsListViewMvc.Listener>
         implements QuestionsRecyclerAdapter.OnQuestionClickListener, QuestionsListViewMvc {
 
     private RecyclerView mRecyclerView;
     private QuestionsRecyclerAdapter mQuestionsListAdapter;
     private ToolbarViewMvc mToolbarViewMvc;
     private Toolbar mToolbar;
+    private final NavDrawerHelper mNavDrawerHelper;
 
     public QuestionsListViewMvcImpl(LayoutInflater inflater, ViewGroup parent,
-                                    ViewMvcFactory viewMvcFactory) {
-        super(inflater, parent);
+                                    ViewMvcFactory viewMvcFactory,
+                                    NavDrawerHelper navDrawerHelper) {
+
         setRootView(inflater.inflate(R.layout.activity_questions_list, parent, false));
         mQuestionsListAdapter = new QuestionsRecyclerAdapter(this, viewMvcFactory);
 
@@ -36,6 +38,7 @@ public class QuestionsListViewMvcImpl extends BaseNavDrawerViewMvc<QuestionsList
 
         mToolbar = findViewById(R.id.toolbar);      //viewgroup
         mToolbarViewMvc = viewMvcFactory.getToolbarViewMvc(mToolbar);
+        mNavDrawerHelper = navDrawerHelper;
 
         initToolbar();
     }
@@ -47,7 +50,7 @@ public class QuestionsListViewMvcImpl extends BaseNavDrawerViewMvc<QuestionsList
         mToolbarViewMvc.enableHamburgerButtonAndListen(new ToolbarViewMvc.HamburgerBtnClickListener() {
             @Override
             public void onHamburgerBtnClicked() {
-                openDrawer();
+                mNavDrawerHelper.openDrawer();
             }
         });
     }
@@ -62,15 +65,5 @@ public class QuestionsListViewMvcImpl extends BaseNavDrawerViewMvc<QuestionsList
     @Override
     public void bindQuestions(List<Question> questions) {
         mQuestionsListAdapter.bindQuestions(questions);
-    }
-
-    @Override
-    protected void onDrawerItemClicked(DrawerItems drawerItem) {
-        for(Listener l : getListeners()) {
-            switch (drawerItem) {
-                case QUESTIONS_LIST:
-                    l.onQuestionsListItemClicked();
-            }
-        }
     }
 }

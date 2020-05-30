@@ -9,13 +9,12 @@ import android.widget.TextView;
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.QuestionDetails;
 import com.example.android_mvc.screens.common.ViewMvcFactory;
-import com.example.android_mvc.screens.common.navdrawer.BaseNavDrawerViewMvc;
-import com.example.android_mvc.screens.common.navdrawer.DrawerItems;
 import com.example.android_mvc.screens.common.toolbars.ToolbarViewMvc;
+import com.example.android_mvc.screens.common.views.BaseObservableViewMvc;
 
 import androidx.appcompat.widget.Toolbar;
 
-public class QuestionDetailsViewMvcImpl extends BaseNavDrawerViewMvc<QuestionDetailsViewMvc.Listener>
+public class QuestionDetailsViewMvcImplImpl extends BaseObservableViewMvc<QuestionDetailsViewMvc.Listener>
         implements QuestionDetailsViewMvc {
 
     private TextView mTitleTv;
@@ -24,9 +23,8 @@ public class QuestionDetailsViewMvcImpl extends BaseNavDrawerViewMvc<QuestionDet
     private Toolbar mToolbar;
     private ToolbarViewMvc mToolbarViewMvc;
 
-    public QuestionDetailsViewMvcImpl(LayoutInflater inflater, ViewGroup parent,
-                                      ViewMvcFactory viewMvcFactory) {
-        super(inflater, parent);
+    public QuestionDetailsViewMvcImplImpl(LayoutInflater inflater, ViewGroup parent,
+                                          ViewMvcFactory viewMvcFactory) {
         setRootView(inflater.inflate(R.layout.layout_question_details, parent, false));
 
         mTitleTv = findViewById(R.id.txt_question_title);
@@ -66,12 +64,5 @@ public class QuestionDetailsViewMvcImpl extends BaseNavDrawerViewMvc<QuestionDet
     @Override
     public void hideProgressIndication() {
         mProgressBar.setVisibility(View.GONE);
-    }
-
-    @Override
-    protected void onDrawerItemClicked(DrawerItems drawerItem) {
-        for(Listener l :getListeners()) {
-            l.onDrawerItemClicked(drawerItem);
-        }
     }
 }
