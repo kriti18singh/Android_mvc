@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">Android_Mvc</string>
-    <string name="error_network_call_failed">network call failed</string>
+    <string name="error_network_call_failed">Network call failed!!</string>
+    <string name="error_network_call_failed_title">Oops</string>
+    <string name="error_network_call_failed_message">Network call failed</string>
+    <string name="error_network_call_failed_button">Ok</string>
     <string name="questions_list_screen_title">LATEST QUESTIONS</string>
     <string name="question_detail_screen_title">QUESTION DETAILS</string>
     <string name="drawer_menu_item_questions_list">Questions List</string>
+    <string name="error_network_call_failed_negative_button">Close</string>
+    <string name="error_network_call_failed_positive_button">Retry</string>
 </resources>

@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.example.android_mvc.R;
 import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
 import com.example.android_mvc.questions.QuestionDetails;
 import com.example.android_mvc.screens.common.controllers.BaseFragment;
+import com.example.android_mvc.screens.common.dialogs.DialogEventBus;
+import com.example.android_mvc.screens.common.dialogs.DialogsManager;
+import com.example.android_mvc.screens.common.dialogs.promptdialog.PromptDialogEvent;
 import com.example.android_mvc.screens.common.screensnavigation.ScreensNavigator;
 
 import androidx.annotation.NonNull;
@@ -17,13 +18,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class QuestionDetailsFragment extends BaseFragment implements
-        FetchQuestionDetailsUsecase.Listener, QuestionDetailsViewMvc.Listener {
+        FetchQuestionDetailsUsecase.Listener, QuestionDetailsViewMvc.Listener, DialogEventBus.Listener {
 
     private static final String ARG_QUESTION_ID = "ARG_QUESTION_ID";
 
     private QuestionDetailsViewMvc mQuestionDetailsViewMvc;
     private FetchQuestionDetailsUsecase mFetchQuestionDetailsUsecase;
     private ScreensNavigator mScreensNavigator;
+    private DialogsManager mDialogsManager;
+    private DialogEventBus mDialogEventBus;
 
     public static Fragment newInstance(String questionId) {
         Bundle args = new Bundle();
@@ -40,6 +43,8 @@ public class QuestionDetailsFragment extends BaseFragment implements
         mQuestionDetailsViewMvc = getCompositionRoot().getMvcFactory().getQuestionDetailsViewMvc(container);
         mFetchQuestionDetailsUsecase = getCompositionRoot().getFetchQuestionDetailsUsecase();
         mScreensNavigator = getCompositionRoot().getScreensNavigator();
+        mDialogsManager = getCompositionRoot().getDialogsManager();
+        mDialogEventBus = getCompositionRoot().getDialogEventBus();
 
         return mQuestionDetailsViewMvc.getRootView();
     }
@@ -51,6 +56,7 @@ public class QuestionDetailsFragment extends BaseFragment implements
         mQuestionDetailsViewMvc.showProgressIndication();
         mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
         mQuestionDetailsViewMvc.registerListener(this);
+        mDialogEventBus.registerListener(this);
     }
 
     @Override
@@ -58,6 +64,7 @@ public class QuestionDetailsFragment extends BaseFragment implements
         super.onStop();
         mFetchQuestionDetailsUsecase.unregisterListener(this);
         mQuestionDetailsViewMvc.unregisterListener(this);
+        mDialogEventBus.unregisterListener(this);
     }
 
     private String getQuestionId() {
@@ -79,11 +86,24 @@ public class QuestionDetailsFragment extends BaseFragment implements
     @Override
     public void onQuestionDetailsFetchFailed() {
         mQuestionDetailsViewMvc.hideProgressIndication();
-        Toast.makeText(getContext(), getString(R.string.error_network_call_failed), Toast.LENGTH_LONG).show();
+        mDialogsManager.showUsecaseErrorDialog(null);
     }
 
     @Override
     public void onNavigateUpClicked() {
-        getActivity().onBackPressed();
+        mScreensNavigator.navigateUp();
+    }
+
+    @Override
+    public void onDialogEvent(Object event) {
+        if(event instanceof PromptDialogEvent) {
+            switch (((PromptDialogEvent) event).getClickedButton()) {
+                case POSITIVE:
+                    mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
+                    break;
+                case NEGATIVE:
+                    break;
+            }
+        }
     }
 }

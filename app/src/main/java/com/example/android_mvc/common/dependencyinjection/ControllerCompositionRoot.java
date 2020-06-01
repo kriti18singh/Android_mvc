@@ -1,5 +1,6 @@
 package com.example.android_mvc.common.dependencyinjection;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 
 import com.example.android_mvc.networking.StackoverflowApi;
@@ -8,6 +9,8 @@ import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
 import com.example.android_mvc.screens.common.ViewMvcFactory;
 import com.example.android_mvc.screens.common.controllers.BackPressedDispatcher;
 import com.example.android_mvc.screens.common.controllers.FragmentFrameWrapper;
+import com.example.android_mvc.screens.common.dialogs.DialogEventBus;
+import com.example.android_mvc.screens.common.dialogs.DialogsManager;
 import com.example.android_mvc.screens.common.navdrawer.NavDrawerHelper;
 import com.example.android_mvc.screens.common.screensnavigation.ScreensNavigator;
 
@@ -67,5 +70,17 @@ public class ControllerCompositionRoot {
 
     public BackPressedDispatcher getBackPressedDispatcher() {
         return (BackPressedDispatcher) getActivity();
+    }
+
+    private Context getContext() {
+        return getActivity();
+    }
+
+    public DialogsManager getDialogsManager() {
+        return new DialogsManager(getContext(), getFragmentManager());
+    }
+
+    public DialogEventBus getDialogEventBus() {
+        return mCompositionRoot.getDialogEventBus();
     }
 }
