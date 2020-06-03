@@ -21,6 +21,7 @@ public class QuestionDetailsFragment extends BaseFragment implements
         FetchQuestionDetailsUsecase.Listener, QuestionDetailsViewMvc.Listener, DialogEventBus.Listener {
 
     private static final String ARG_QUESTION_ID = "ARG_QUESTION_ID";
+    private static final String DIALOG_NETWORK_ERROR_TAG = "dialog_network_error_tag";
 
     private QuestionDetailsViewMvc mQuestionDetailsViewMvc;
     private FetchQuestionDetailsUsecase mFetchQuestionDetailsUsecase;
@@ -54,9 +55,12 @@ public class QuestionDetailsFragment extends BaseFragment implements
         super.onStart();
         mFetchQuestionDetailsUsecase.registerListener(this);
         mQuestionDetailsViewMvc.showProgressIndication();
-        mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
         mQuestionDetailsViewMvc.registerListener(this);
         mDialogEventBus.registerListener(this);
+
+        if(!DIALOG_NETWORK_ERROR_TAG.equals(mDialogsManager.getShownDialogTag())) {
+            mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
+        }
     }
 
     @Override
@@ -86,7 +90,7 @@ public class QuestionDetailsFragment extends BaseFragment implements
     @Override
     public void onQuestionDetailsFetchFailed() {
         mQuestionDetailsViewMvc.hideProgressIndication();
-        mDialogsManager.showUsecaseErrorDialog(null);
+        mDialogsManager.showUsecaseErrorDialog(DIALOG_NETWORK_ERROR_TAG);
     }
 
     @Override

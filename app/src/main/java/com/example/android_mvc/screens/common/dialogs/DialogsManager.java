@@ -3,11 +3,11 @@ package com.example.android_mvc.screens.common.dialogs;
 import android.content.Context;
 
 import com.example.android_mvc.R;
-import com.example.android_mvc.screens.common.dialogs.infodialog.InfoDialog;
 import com.example.android_mvc.screens.common.dialogs.promptdialog.PromptDialog;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 public class DialogsManager {
@@ -32,5 +32,14 @@ public class DialogsManager {
 
     private String getString(int stringId) {
         return mContext.getString(stringId);
+    }
+
+    public @Nullable String getShownDialogTag() {
+        for(Fragment fragment : mFragmentManager.getFragments()) {
+            if(fragment instanceof BaseDialog) {
+                return fragment.getTag();
+            }
+        }
+        return null;
     }
 }
