@@ -19,7 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class QuestionsListFragment extends BaseFragment implements
-        QuestionsListViewMvcImpl.Listener, FetchLastActiveQuestionsUsecase.Listener {
+        QuestionsListViewMvc.Listener, FetchLastActiveQuestionsUsecase.Listener {
 
     private QuestionsListViewMvc mViewMvc;
     private FetchLastActiveQuestionsUsecase mFetchLastActiveQuestionsUsecase;
@@ -50,6 +50,7 @@ public class QuestionsListFragment extends BaseFragment implements
     public void onStart() {
         super.onStart();
         mFetchLastActiveQuestionsUsecase.registerListener(this);
+        mViewMvc.showProgressIndication();
         mFetchLastActiveQuestionsUsecase.fetchLastActiveQuestionsAndNotify();
     }
 
@@ -76,11 +77,13 @@ public class QuestionsListFragment extends BaseFragment implements
 
     @Override
     public void onLastActiveQuestionsFetched(List<Question> questions) {
+        mViewMvc.hideProgressIndication();
         bindQuestions(questions);
     }
 
     @Override
     public void onLastActiveQuestionsFetchFailed() {
+        mViewMvc.hideProgressIndication();
         Toast.makeText(getContext(), R.string.error_network_call_failed, Toast.LENGTH_SHORT).show();
     }
 }

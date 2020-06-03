@@ -1,7 +1,9 @@
 package com.example.android_mvc.screens.questionslist;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.android_mvc.R;
 import com.example.android_mvc.questions.Question;
@@ -24,6 +26,7 @@ public class QuestionsListViewMvcImpl extends BaseObservableViewMvc<QuestionsLis
     private ToolbarViewMvc mToolbarViewMvc;
     private Toolbar mToolbar;
     private final NavDrawerHelper mNavDrawerHelper;
+    private ProgressBar mProgressBar;
 
     public QuestionsListViewMvcImpl(LayoutInflater inflater, ViewGroup parent,
                                     ViewMvcFactory viewMvcFactory,
@@ -39,6 +42,7 @@ public class QuestionsListViewMvcImpl extends BaseObservableViewMvc<QuestionsLis
         mToolbar = findViewById(R.id.toolbar);      //viewgroup
         mToolbarViewMvc = viewMvcFactory.getToolbarViewMvc(mToolbar);
         mNavDrawerHelper = navDrawerHelper;
+        mProgressBar = findViewById(R.id.progress);
 
         initToolbar();
     }
@@ -65,5 +69,15 @@ public class QuestionsListViewMvcImpl extends BaseObservableViewMvc<QuestionsLis
     @Override
     public void bindQuestions(List<Question> questions) {
         mQuestionsListAdapter.bindQuestions(questions);
+    }
+
+    @Override
+    public void hideProgressIndication() {
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showProgressIndication() {
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 }
