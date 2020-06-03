@@ -22,12 +22,8 @@ public class QuestionDetailsFragment extends BaseFragment implements
 
     private static final String ARG_QUESTION_ID = "ARG_QUESTION_ID";
     private static final String DIALOG_NETWORK_ERROR_TAG = "dialog_network_error_tag";
+    private static final String SAVED_STATE_SCREEN_STATE = "saved_state_screen_state";
 
-    private QuestionDetailsViewMvc mQuestionDetailsViewMvc;
-    private FetchQuestionDetailsUsecase mFetchQuestionDetailsUsecase;
-    private ScreensNavigator mScreensNavigator;
-    private DialogsManager mDialogsManager;
-    private DialogEventBus mDialogEventBus;
 
     public static Fragment newInstance(String questionId) {
         Bundle args = new Bundle();
@@ -35,6 +31,26 @@ public class QuestionDetailsFragment extends BaseFragment implements
         QuestionDetailsFragment fragment = new QuestionDetailsFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private enum ScreenState {
+        IDLE, QUESTION_DETAILS_SHOWN, NETWORK_ERROR
+    }
+
+    private QuestionDetailsViewMvc mQuestionDetailsViewMvc;
+    private FetchQuestionDetailsUsecase mFetchQuestionDetailsUsecase;
+    private ScreensNavigator mScreensNavigator;
+    private DialogsManager mDialogsManager;
+    private DialogEventBus mDialogEventBus;
+
+    private ScreenState mScreenState = ScreenState.IDLE;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            mScreenState = (ScreenState) savedInstanceState.getSerializable(SAVED_STATE_SCREEN_STATE);
+        }
     }
 
     @Nullable
@@ -58,7 +74,7 @@ public class QuestionDetailsFragment extends BaseFragment implements
         mQuestionDetailsViewMvc.registerListener(this);
         mDialogEventBus.registerListener(this);
 
-        if(!DIALOG_NETWORK_ERROR_TAG.equals(mDialogsManager.getShownDialogTag())) {
+        if(!mScreenState.equals(ScreenState.NETWORK_ERROR)) {
             mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
         }
     }
@@ -69,6 +85,12 @@ public class QuestionDetailsFragment extends BaseFragment implements
         mFetchQuestionDetailsUsecase.unregisterListener(this);
         mQuestionDetailsViewMvc.unregisterListener(this);
         mDialogEventBus.unregisterListener(this);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(SAVED_STATE_SCREEN_STATE, mScreenState);
     }
 
     private String getQuestionId() {
@@ -85,12 +107,14 @@ public class QuestionDetailsFragment extends BaseFragment implements
     @Override
     public void onQuestionDetailsFetched(QuestionDetails questionDetails) {
         bindQuestion(questionDetails);
+        mScreenState = ScreenState.QUESTION_DETAILS_SHOWN;
     }
 
     @Override
     public void onQuestionDetailsFetchFailed() {
         mQuestionDetailsViewMvc.hideProgressIndication();
         mDialogsManager.showUsecaseErrorDialog(DIALOG_NETWORK_ERROR_TAG);
+        mScreenState = ScreenState.NETWORK_ERROR;
     }
 
     @Override
@@ -103,9 +127,11 @@ public class QuestionDetailsFragment extends BaseFragment implements
         if(event instanceof PromptDialogEvent) {
             switch (((PromptDialogEvent) event).getClickedButton()) {
                 case POSITIVE:
+                    mScreenState = ScreenState.IDLE;
                     mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
                     break;
                 case NEGATIVE:
+                    mScreenState = ScreenState.IDLE;
                     break;
             }
         }
