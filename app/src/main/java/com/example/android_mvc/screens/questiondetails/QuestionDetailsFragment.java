@@ -70,13 +70,17 @@ public class QuestionDetailsFragment extends BaseFragment implements
     public void onStart() {
         super.onStart();
         mFetchQuestionDetailsUsecase.registerListener(this);
-        mQuestionDetailsViewMvc.showProgressIndication();
         mQuestionDetailsViewMvc.registerListener(this);
         mDialogEventBus.registerListener(this);
 
         if(!mScreenState.equals(ScreenState.NETWORK_ERROR)) {
-            mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
+            fetchQuestionDetailsAndNotify();
         }
+    }
+
+    private void fetchQuestionDetailsAndNotify() {
+        mQuestionDetailsViewMvc.showProgressIndication();
+        mFetchQuestionDetailsUsecase.fetchQuestionDetailsAndNotify(getQuestionId());
     }
 
     @Override
