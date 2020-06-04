@@ -2,18 +2,14 @@ package com.example.android_mvc.screens.common.dialogs.promptdialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.example.android_mvc.R;
 import com.example.android_mvc.screens.common.dialogs.BaseDialog;
 import com.example.android_mvc.screens.common.dialogs.DialogEventBus;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class PromptDialog extends BaseDialog {
+public class PromptDialog extends BaseDialog implements PromptViewMvc.Listener {
 
     private static final String EXTRA_DIALOG_TITLE = "dialog_title";
     private static final String EXTRA_DIALOG_MESSAGE = "dialog_message";
@@ -32,11 +28,8 @@ public class PromptDialog extends BaseDialog {
         dialog.setArguments(bundle);
         return dialog;
     }
-    private TextView mDialogTitle;
-    private TextView mDialogMessage;
-    private Button mDialogPositiveButton;
-    private Button mDialogNegativeButton;
     private DialogEventBus mDialogEventBus;
+    private PromptViewMvc mPromptViewMvc;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,41 +43,38 @@ public class PromptDialog extends BaseDialog {
         if (getArguments() == null) {
             throw new IllegalStateException("arguments mustn't be null");
         }
+        mPromptViewMvc = getCompositionRoot().getMvcFactory().getPromptViewMvc(null);
         Dialog dialog = new Dialog(getContext());
-        dialog.setContentView(R.layout.layout_prompt_dialog);
-        mDialogTitle = dialog.findViewById(R.id.txt_title);
-        mDialogMessage = dialog.findViewById(R.id.txt_message);
-        mDialogPositiveButton = dialog.findViewById(R.id.btn_positive);
-        mDialogNegativeButton = dialog.findViewById(R.id.btn_negative);
+        dialog.setContentView(mPromptViewMvc.getRootView());
 
-        mDialogTitle.setText(getArguments().getString(EXTRA_DIALOG_TITLE));
-        mDialogMessage.setText(getArguments().getString(EXTRA_DIALOG_MESSAGE));
-        mDialogPositiveButton.setText(getArguments().getString(EXTRA_DIALOG_POSITIVE_BUTTON_CAPTION));
-
-        mDialogPositiveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onPositiveButtonClicked();
-            }
-        });
-        mDialogNegativeButton.setText(getArguments().getString(EXTRA_DIALOG_NEGATIVE_BUTTON_CAPTION));
-
-        mDialogNegativeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onNegativeButtonClicked();
-            }
-        });
+        mPromptViewMvc.setTitle(getArguments().getString(EXTRA_DIALOG_TITLE));
+        mPromptViewMvc.setMessage(getArguments().getString(EXTRA_DIALOG_MESSAGE));
+        mPromptViewMvc.setPositiveButtonCaption(getArguments().getString(EXTRA_DIALOG_POSITIVE_BUTTON_CAPTION));
+        mPromptViewMvc.setNegativeButtonCaption(getArguments().getString(EXTRA_DIALOG_NEGATIVE_BUTTON_CAPTION));
 
         return dialog;
     }
 
-    private void onNegativeButtonClicked() {
+    @Override
+    public void onStart() {
+        super.onStart();
+        mPromptViewMvc.registerListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mPromptViewMvc.unregisterListener(this);
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
         dismiss();
         mDialogEventBus.postEvent(new PromptDialogEvent(PromptDialogEvent.Button.NEGATIVE));
     }
 
-    private void onPositiveButtonClicked() {
+    @Override
+    public void onPositiveButtonClicked() {
         dismiss();
         mDialogEventBus.postEvent(new PromptDialogEvent(PromptDialogEvent.Button.POSITIVE));
     }

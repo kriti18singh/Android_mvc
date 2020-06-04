@@ -3,6 +3,8 @@ package com.example.android_mvc.screens.common;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.example.android_mvc.screens.common.dialogs.promptdialog.PromptViewMvc;
+import com.example.android_mvc.screens.common.dialogs.promptdialog.PromptViewMvcImpl;
 import com.example.android_mvc.screens.common.navdrawer.NavDrawerHelper;
 import com.example.android_mvc.screens.common.navdrawer.NavDrawerViewMvc;
 import com.example.android_mvc.screens.common.navdrawer.NavDrawerViewMvcImpl;
@@ -44,5 +46,9 @@ public class ViewMvcFactory {
 
     public NavDrawerViewMvc getNavDrawerViewMvc(@Nullable ViewGroup parent) {
         return new NavDrawerViewMvcImpl(mInflater, parent);
+    }
+
+    public PromptViewMvc getPromptViewMvc(@Nullable ViewGroup parent) {
+        return new PromptViewMvcImpl(mInflater, parent);
     }
 }
