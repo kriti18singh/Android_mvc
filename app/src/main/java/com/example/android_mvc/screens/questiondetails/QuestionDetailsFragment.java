@@ -127,6 +127,11 @@ public class QuestionDetailsFragment extends BaseFragment implements
     }
 
     @Override
+    public void onLocationRequested() {
+
+    }
+
+    @Override
     public void onDialogEvent(Object event) {
         if(event instanceof PromptDialogEvent) {
             switch (((PromptDialogEvent) event).getClickedButton()) {

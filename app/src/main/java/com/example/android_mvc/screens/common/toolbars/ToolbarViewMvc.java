@@ -19,11 +19,17 @@ public class ToolbarViewMvc extends BaseViewMvc {
         void onHamburgerBtnClicked();
     }
 
+    public interface LocationButtonClickListener {
+        void onLocationButtonClicked();
+    }
+
     private TextView mToolbarTitle;
     private ImageButton mBackButton;
     private ImageButton mHamburgerButton;
+    private ImageButton mLocationButton;
     private NavigateUpClickListener mNavigateUpListener;
     private HamburgerBtnClickListener mHamburgerListener;
+    private LocationButtonClickListener mLocationButtonClickListener;
 
     public ToolbarViewMvc(LayoutInflater inflater, ViewGroup parent) {
         setRootView(inflater.inflate(R.layout.layout_toolbar, parent, false));
@@ -40,6 +46,14 @@ public class ToolbarViewMvc extends BaseViewMvc {
             @Override
             public void onClick(View view) {
                 mHamburgerListener.onHamburgerBtnClicked();
+            }
+        });
+
+        mLocationButton = findViewById(R.id.location_button);
+        mLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLocationButtonClickListener.onLocationButtonClicked();
             }
         });
     }
@@ -62,5 +76,10 @@ public class ToolbarViewMvc extends BaseViewMvc {
         }
         mHamburgerListener = hamburgerBtnClickListener;
         mHamburgerButton.setVisibility(View.VISIBLE);
+    }
+
+    public void enableLocationButtonAndListen(LocationButtonClickListener locationButtonClickListener) {
+        mLocationButtonClickListener = locationButtonClickListener;
+        mLocationButton.setVisibility(View.VISIBLE);
     }
 }
