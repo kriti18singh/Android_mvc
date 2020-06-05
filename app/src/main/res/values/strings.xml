@@ -9,4 +9,16 @@
     <string name="drawer_menu_item_questions_list">Questions List</string>
     <string name="error_network_call_failed_negative_button">Close</string>
     <string name="error_network_call_failed_positive_button">Retry</string>
+
+    <!-- Permissions granted dialog -->
+    <string name="permissions_granted_title">Permission granted!</string>
+    <string name="permissions_granted_button_caption">Ok</string>
+    <string name="permissions_granted_message">Permission granted</string>
+
+    <!-- Permissions declined cant ask more dialog -->
+    <string name="permissions_declined_title">PERMISSION DECLINED!</string>
+    <string name="permissions_declined_button_caption">Ok</string>
+    <string name="permissions_declined_message">Permission declined.</string>
+    <string name="permissions_declined_cant_ask_more_message">Permission declined. Can\'t ask more</string>
+
 </resources>

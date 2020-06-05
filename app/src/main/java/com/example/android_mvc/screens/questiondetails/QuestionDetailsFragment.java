@@ -1,5 +1,7 @@
 package com.example.android_mvc.screens.questiondetails;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,8 @@ import com.example.android_mvc.screens.common.screensnavigation.ScreensNavigator
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 public class QuestionDetailsFragment extends BaseFragment implements
@@ -128,7 +132,43 @@ public class QuestionDetailsFragment extends BaseFragment implements
 
     @Override
     public void onLocationRequested() {
+        if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            //permission alrteady granted
+            mDialogsManager.showPermissionsGrantedDialog(null);
+        } else {
+            requestPermissions(
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1009
+            );
+        }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == 1009) {
+            if(permissions.length < 1) {
+                throw new RuntimeException("No permissions on requestPermissionsResult");
+            } else {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //got the permissions
+                    mDialogsManager.showPermissionsGrantedDialog(null);
+                } else {
+                    if(ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        // user declined but i can ask more
+                        // but dont request again
+                        mDialogsManager.showPermissionDeclinedDialog(null);
+                    } else {
+                        //user denied and i Cant ask more
+                        //explicitly tell the user to manually grant the permission
+                        //or disable the functionality
+                        mDialogsManager.showPermissionDeclinedCantAskMoreDialog(null);
+                    }
+                }
+            }
+        }
     }
 
     @Override

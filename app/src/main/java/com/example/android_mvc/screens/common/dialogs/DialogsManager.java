@@ -3,6 +3,7 @@ package com.example.android_mvc.screens.common.dialogs;
 import android.content.Context;
 
 import com.example.android_mvc.R;
+import com.example.android_mvc.screens.common.dialogs.infodialog.InfoDialog;
 import com.example.android_mvc.screens.common.dialogs.promptdialog.PromptDialog;
 
 import androidx.annotation.Nullable;
@@ -41,5 +42,32 @@ public class DialogsManager {
             }
         }
         return null;
+    }
+
+    public void showPermissionsGrantedDialog(@Nullable String tag) {
+        DialogFragment infoDialog = InfoDialog.newInfoDialog(
+                getString(R.string.permissions_granted_title),
+                getString(R.string.permissions_granted_message),
+                getString(R.string.permissions_granted_button_caption)
+        );
+        infoDialog.show(mFragmentManager, tag);
+    }
+
+    public void showPermissionDeclinedCantAskMoreDialog(@Nullable String tag) {
+        DialogFragment infoDialog = InfoDialog.newInfoDialog(
+                getString(R.string.permissions_declined_title),
+                getString(R.string.permissions_declined_cant_ask_more_message),
+                getString(R.string.permissions_declined_button_caption)
+        );
+        infoDialog.show(mFragmentManager, tag);
+    }
+
+    public void showPermissionDeclinedDialog(@Nullable String tag) {
+        DialogFragment infoDialog = InfoDialog.newInfoDialog(
+                getString(R.string.permissions_declined_title),
+                getString(R.string.permissions_declined_message),
+                getString(R.string.permissions_declined_button_caption)
+        );
+        infoDialog.show(mFragmentManager, tag);
     }
 }
