@@ -3,6 +3,7 @@ package com.example.android_mvc.common.dependencyinjection;
 import android.content.Context;
 import android.view.LayoutInflater;
 
+import com.example.android_mvc.common.permissions.PermissionManager;
 import com.example.android_mvc.networking.StackoverflowApi;
 import com.example.android_mvc.questions.FetchLastActiveQuestionsUsecase;
 import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
@@ -19,17 +20,14 @@ import androidx.fragment.app.FragmentManager;
 
 public class ControllerCompositionRoot {
 
-    private final CompositionRoot mCompositionRoot;
+    private final ActivityCompositionRoot mActivityCompositionRoot;
 
-    private final FragmentActivity mActivity;
-
-    public ControllerCompositionRoot(CompositionRoot mCompositionRoot, FragmentActivity activity) {
-        this.mCompositionRoot = mCompositionRoot;
-        this.mActivity = activity;
+    public ControllerCompositionRoot(ActivityCompositionRoot mActivityCompositionRoot) {
+        this.mActivityCompositionRoot = mActivityCompositionRoot;
     }
 
     public FragmentActivity getActivity() {
-        return mActivity;
+        return mActivityCompositionRoot.getActivity();
     }
 
     private FragmentManager getFragmentManager() {
@@ -37,11 +35,11 @@ public class ControllerCompositionRoot {
     }
 
     private StackoverflowApi getStackoverflowApi() {
-        return mCompositionRoot.getStackoverflowApi();
+        return mActivityCompositionRoot.getStackoverflowApi();
     }
 
     private LayoutInflater getInflater() {
-        return LayoutInflater.from(mActivity);
+        return LayoutInflater.from(mActivityCompositionRoot.getActivity());
     }
 
     public ViewMvcFactory getMvcFactory() {
@@ -81,6 +79,10 @@ public class ControllerCompositionRoot {
     }
 
     public DialogEventBus getDialogEventBus() {
-        return mCompositionRoot.getDialogEventBus();
+        return mActivityCompositionRoot.getDialogEventBus();
+    }
+
+    public PermissionManager getPermissionManager() {
+        return mActivityCompositionRoot.getPermissionManager();
     }
 }

@@ -3,7 +3,7 @@ package com.example.android_mvc.screens.common.main;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
-import com.example.android_mvc.R;
+import com.example.android_mvc.common.permissions.PermissionManager;
 import com.example.android_mvc.screens.common.controllers.BackPressedDispatcher;
 import com.example.android_mvc.screens.common.controllers.BackPressedListener;
 import com.example.android_mvc.screens.common.controllers.BaseActivity;
@@ -15,12 +15,15 @@ import com.example.android_mvc.screens.common.screensnavigation.ScreensNavigator
 import java.util.HashSet;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
+
 public class MainActivity extends BaseActivity implements BackPressedDispatcher,
         FragmentFrameWrapper, NavDrawerViewMvc.Listener, NavDrawerHelper {
 
     private final Set<BackPressedListener> mListeners = new HashSet<>();
     private NavDrawerViewMvc mNavDrawerViewMvc;
     private ScreensNavigator mScreensNavigator;
+    private PermissionManager mPermissionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class MainActivity extends BaseActivity implements BackPressedDispatcher,
             //no recreation, fresh activity
             mScreensNavigator.toQuestionsList();
         }
+        mPermissionManager = getCompositionRoot().getPermissionManager();
     }
 
     @Override
@@ -93,5 +97,11 @@ public class MainActivity extends BaseActivity implements BackPressedDispatcher,
     @Override
     public boolean isDrawerOpen() {
         return mNavDrawerViewMvc.isDrawerOpen();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mPermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

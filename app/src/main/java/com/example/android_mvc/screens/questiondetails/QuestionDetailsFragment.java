@@ -1,32 +1,33 @@
 package com.example.android_mvc.screens.questiondetails;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android_mvc.common.dependencyinjection.ControllerCompositionRoot;
+import com.example.android_mvc.common.permissions.PermissionManager;
 import com.example.android_mvc.questions.FetchQuestionDetailsUsecase;
 import com.example.android_mvc.questions.QuestionDetails;
 import com.example.android_mvc.screens.common.controllers.BaseFragment;
 import com.example.android_mvc.screens.common.dialogs.DialogEventBus;
 import com.example.android_mvc.screens.common.dialogs.DialogsManager;
 import com.example.android_mvc.screens.common.dialogs.promptdialog.PromptDialogEvent;
+import com.example.android_mvc.screens.common.main.MainActivity;
 import com.example.android_mvc.screens.common.screensnavigation.ScreensNavigator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 public class QuestionDetailsFragment extends BaseFragment implements
-        FetchQuestionDetailsUsecase.Listener, QuestionDetailsViewMvc.Listener, DialogEventBus.Listener {
+        FetchQuestionDetailsUsecase.Listener, QuestionDetailsViewMvc.Listener, DialogEventBus.Listener, PermissionManager.Listener {
 
     private static final String ARG_QUESTION_ID = "ARG_QUESTION_ID";
     private static final String DIALOG_NETWORK_ERROR_TAG = "dialog_network_error_tag";
     private static final String SAVED_STATE_SCREEN_STATE = "saved_state_screen_state";
+    private static final int REQUEST_CODE = 5009;
 
 
     public static Fragment newInstance(String questionId) {
@@ -46,6 +47,7 @@ public class QuestionDetailsFragment extends BaseFragment implements
     private ScreensNavigator mScreensNavigator;
     private DialogsManager mDialogsManager;
     private DialogEventBus mDialogEventBus;
+    private PermissionManager mPermissionManager;
 
     private ScreenState mScreenState = ScreenState.IDLE;
 
@@ -55,6 +57,11 @@ public class QuestionDetailsFragment extends BaseFragment implements
         if(savedInstanceState != null) {
             mScreenState = (ScreenState) savedInstanceState.getSerializable(SAVED_STATE_SCREEN_STATE);
         }
+        mPermissionManager = getCompositionRoot().getPermissionManager();
+        mFetchQuestionDetailsUsecase = ((MainActivity)getActivity()).getCompositionRoot().getFetchQuestionDetailsUsecase();
+        mScreensNavigator = ((MainActivity)getActivity()).getCompositionRoot().getScreensNavigator();
+        mDialogsManager = ((MainActivity)getActivity()).getCompositionRoot().getDialogsManager();
+        mDialogEventBus = ((MainActivity)getActivity()).getCompositionRoot().getDialogEventBus();
     }
 
     @Nullable
@@ -62,11 +69,6 @@ public class QuestionDetailsFragment extends BaseFragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         mQuestionDetailsViewMvc = getCompositionRoot().getMvcFactory().getQuestionDetailsViewMvc(container);
-        mFetchQuestionDetailsUsecase = getCompositionRoot().getFetchQuestionDetailsUsecase();
-        mScreensNavigator = getCompositionRoot().getScreensNavigator();
-        mDialogsManager = getCompositionRoot().getDialogsManager();
-        mDialogEventBus = getCompositionRoot().getDialogEventBus();
-
         return mQuestionDetailsViewMvc.getRootView();
     }
 
@@ -76,6 +78,7 @@ public class QuestionDetailsFragment extends BaseFragment implements
         mFetchQuestionDetailsUsecase.registerListener(this);
         mQuestionDetailsViewMvc.registerListener(this);
         mDialogEventBus.registerListener(this);
+        mPermissionManager.registerListener(this);
 
         if(!mScreenState.equals(ScreenState.NETWORK_ERROR)) {
             fetchQuestionDetailsAndNotify();
@@ -93,6 +96,7 @@ public class QuestionDetailsFragment extends BaseFragment implements
         mFetchQuestionDetailsUsecase.unregisterListener(this);
         mQuestionDetailsViewMvc.unregisterListener(this);
         mDialogEventBus.unregisterListener(this);
+        mPermissionManager.unregisterListener(this);
     }
 
     @Override
@@ -132,43 +136,12 @@ public class QuestionDetailsFragment extends BaseFragment implements
 
     @Override
     public void onLocationRequested() {
-        if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            //permission alrteady granted
+        if(mPermissionManager.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             mDialogsManager.showPermissionsGrantedDialog(null);
         } else {
-            requestPermissions(
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    1009
-            );
+            mPermissionManager.requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_CODE);
         }
 
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == 1009) {
-            if(permissions.length < 1) {
-                throw new RuntimeException("No permissions on requestPermissionsResult");
-            } else {
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //got the permissions
-                    mDialogsManager.showPermissionsGrantedDialog(null);
-                } else {
-                    if(ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
-                            Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        // user declined but i can ask more
-                        // but dont request again
-                        mDialogsManager.showPermissionDeclinedDialog(null);
-                    } else {
-                        //user denied and i Cant ask more
-                        //explicitly tell the user to manually grant the permission
-                        //or disable the functionality
-                        mDialogsManager.showPermissionDeclinedCantAskMoreDialog(null);
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -184,5 +157,20 @@ public class QuestionDetailsFragment extends BaseFragment implements
                     break;
             }
         }
+    }
+
+    @Override
+    public void onPermissionGranted(String permission, int requestCode) {
+        mDialogsManager.showPermissionsGrantedDialog(null);
+    }
+
+    @Override
+    public void onPermissionDeniedAndDontAskAgain(String permission, int requestCode) {
+        mDialogsManager.showPermissionDeclinedCantAskMoreDialog(null);
+    }
+
+    @Override
+    public void onPermissionDenied(String permission, int requestCode) {
+        mDialogsManager.showPermissionDeclinedDialog(null);
     }
 }
